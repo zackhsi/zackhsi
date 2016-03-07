@@ -16,6 +16,15 @@ Ensure nginx configuration:
     - listen_in:
       - service: nginx
 
+Ensure nginx server configuration:
+  file.managed:
+    - name: /etc/nginx/sites-available/default
+    - source: salt://nginx/sites-available/default
+    - template: jinja
+    - mode: 644
+    - listen_in:
+      - service: nginx
+
 Run nginx:
   service.running:
     - name: nginx

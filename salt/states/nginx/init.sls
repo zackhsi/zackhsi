@@ -10,3 +10,10 @@ Ensure apache2 is not running:
 Run nginx:
   service.running:
     - name: nginx
+
+Ensure nginx configuration:
+  file.managed:
+    - name: /etc/nginx/nginx.conf
+    - source: salt://nginx/nginx.conf
+    - template: jinja
+    - mode: 644

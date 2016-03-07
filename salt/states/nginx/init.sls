@@ -16,14 +16,29 @@ Ensure nginx configuration:
     - listen_in:
       - service: nginx
 
-Ensure nginx server configuration:
+Ensure default nginx server is absent:
+  file.absent:
+    - name: /etc/nginx/sites-enabled/default
+
+{% for site in [
+  'zackhsi',
+] %}
+Ensure nginx server configuration is available:
   file.managed:
-    - name: /etc/nginx/sites-available/default
-    - source: salt://nginx/sites-available/default
+    - name: /etc/nginx/sites-available/{{ site }}
+    - source: salt://nginx/sites-available/{{ site }}
     - template: jinja
     - mode: 644
     - listen_in:
       - service: nginx
+
+Ensure nginx server configuration is enabled:
+  file.symlink:
+    - name: /etc/nginx/sites-enabled/{{ site }} 
+    - target: /etc/nginx/sites-available/{{ site }}
+    - listen_in:
+      - service: nginx
+{% endfor %}
 
 Run nginx:
   service.running:

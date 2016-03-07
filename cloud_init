@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -e
+set -x
+
+repo=zackhsi
+
+main() {
+  install_git
+  clone
+  install_salt_minion
+  highstate
+}
+
+install_git() {
+  apt-get update -y
+  apt-get install -y git-all
+}
+
+clone() {
+  mkdir -p /srv/repos
+  pushd /srv/repos
+  git clone "https://github.com/zackhsi/${repo}.git"
+  popd
+}
+
+install_salt_minion() {
+  # Install salt
+  curl -L https://bootstrap.saltstack.com | sh -s
+
+  # Configure minion
+  cat <<EOF | tee /etc/salt/minion
+failhard: True
+file_client: local
+state_verbose: False
+state_output: mixed
+log_level: info
+file_roots:
+  base:
+    - /srv/repos/${repo}/salt/states
+pillar_roots:
+  base:
+    - /srv/repos/${repo}/salt/pillar
+EOF
+}
+
+highstate() {
+  salt-call state.highstate
+}
+
+main

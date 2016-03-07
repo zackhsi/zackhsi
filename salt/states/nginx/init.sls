@@ -21,9 +21,10 @@ Ensure default nginx server is absent:
     - name: /etc/nginx/sites-enabled/default
 
 {% for site in [
+  'kegbot',
   'zackhsi',
 ] %}
-Ensure nginx server configuration is available:
+Ensure nginx server {{ site }} is available:
   file.managed:
     - name: /etc/nginx/sites-available/{{ site }}
     - source: salt://nginx/sites-available/{{ site }}
@@ -32,7 +33,7 @@ Ensure nginx server configuration is available:
     - listen_in:
       - service: nginx
 
-Ensure nginx server configuration is enabled:
+Ensure nginx server {{ site }} is enabled:
   file.symlink:
     - name: /etc/nginx/sites-enabled/{{ site }} 
     - target: /etc/nginx/sites-available/{{ site }}

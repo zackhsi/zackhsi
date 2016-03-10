@@ -1,0 +1,5 @@
+Configuration Management
+========================
+```bash
+./configure
+```
